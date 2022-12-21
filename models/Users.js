@@ -5,12 +5,12 @@ const UsersSchema = mongoose.Schema({
     username: { type: String, required: true },
     email: { type: String, required: true },
     phone: { type: String, required: true },
-    website: { type: String, required: true },
+    website: { type: String, required: true, default: 'example@gmail.com' },
     address: {
-        street: { type: String, required: true },
-        suite: { type: String, required: true },
+        street: { type: String, required: true, default: 'addres street' },
+        suite: { type: String, required: true, default: 'addres suite' },
         city: { type: String, required: true },
-        zipcode: { type: String, required: true },
+        zipcode: { type: String, required: true, default: 'addres zipcode' },
         geo: {
             lng: { type: String, required: true, default: '-37.3159' },
             lat: { type: String, required: true, default: '81.1496' },

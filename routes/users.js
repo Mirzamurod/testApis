@@ -12,11 +12,11 @@ router
             'username',
             'email',
             'phone',
-            'website',
-            'address.street',
-            'address.suite',
+            // 'website',
+            // 'address.street',
+            // 'address.suite',
             'address.city',
-            'address.zipcode',
+            // 'address.zipcode',
         ]),
         users.addUser
     )
@@ -29,11 +29,11 @@ router
             'username',
             'email',
             'phone',
-            'website',
-            'address.street',
-            'address.suite',
+            // 'website',
+            // 'address.street',
+            // 'address.suite',
             'address.city',
-            'address.zipcode',
+            // 'address.zipcode',
         ]),
         users.editUser
     )
