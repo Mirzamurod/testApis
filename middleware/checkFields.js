@@ -31,7 +31,7 @@ const checkFields = fields1 =>
             }
         })
 
-        if (Object.keys(message).length) res.status(400).json({ message })
+        if (Object.keys(message).length) res.status(400).json({ message, success: false })
         else next()
     })
 

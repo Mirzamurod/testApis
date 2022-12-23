@@ -3,17 +3,21 @@ import Users from '../models/Users.js'
 import Albums from './../models/Albums.js'
 
 const albums = {
-    // @desc    Fetch all albums
-    // @route   GET /albums
-    // @access  Public
+    /**
+     * @desc    Fetch all albums
+     * @route   GET /albums
+     * @access  Public
+     */
     getAlbums: expressAsyncHandler(async (req, res) => {
         const albums = await Albums.find({})
         res.status(200).json(albums)
     }),
 
-    // @desc    Get album
-    // @route   GET /albums/:id
-    // @access  Public
+    /**
+     * @desc    Get album
+     * @route   GET /albums/:id
+     * @access  Public
+     */
     getAlbum: expressAsyncHandler(async (req, res) => {
         const album = await Albums.findById(req.params.id)
 
@@ -21,9 +25,11 @@ const albums = {
         else res.status(400).json({ message: 'Album not found' })
     }),
 
-    // @desc    Add album
-    // @route   POST /albums
-    // @access  Public
+    /**
+     * @desc    Add album
+     * @route   POST /albums
+     * @access  Public
+     */
     addAlbum: expressAsyncHandler(async (req, res) => {
         const { userId, title } = req.body
         const user = await Users.findById(userId)
@@ -35,9 +41,11 @@ const albums = {
         } else res.status(400).json({ message: 'User not found', success: false })
     }),
 
-    // @desc    Edit album
-    // @route   PUT /albums/:id
-    // @access  Public
+    /**
+     * @desc    Edit album
+     * @route   PUT /albums/:id
+     * @access  Public
+     */
     editAlbum: expressAsyncHandler(async (req, res) => {
         const album = await Albums.findById(req.params.id)
 
@@ -58,9 +66,11 @@ const albums = {
         } else res.status(400).json({ message: 'Albums not found', success: false })
     }),
 
-    // @desc    Delete album
-    // @route   DELETE /albums/:id
-    // @access  Public
+    /**
+     * @desc    Delete album
+     * @route   DELETE /albums/:id
+     * @access  Public
+     */
     deleteAlbum: expressAsyncHandler(async (req, res) => {
         const album = await Albums.findById(req.params.id)
 

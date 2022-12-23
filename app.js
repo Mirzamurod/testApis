@@ -1,6 +1,7 @@
 import express from 'express'
 import dotenv from 'dotenv'
 import cors from 'cors'
+import fs from 'fs'
 import colors from 'colors'
 import connectDb from './config/db.js'
 
@@ -36,8 +37,12 @@ connectDb()
 app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
+// app.use('/images', express.static('images'))  // /images bosa baseURL/images/imageURL
+app.use(express.static('images')) // bunda baseURL/imageURL
 
-app.get('/', (req, res) => res.send('Hello World'))
+app.get('/', (req, res) =>
+    res.send('<a href="https://github.com/Mirzamurod/testApis/blob/master/README.md">Doc</a>')
+)
 
 const importData = async () => {
     try {
@@ -86,6 +91,9 @@ const importData = async () => {
         )
         await Photos.insertMany(photosArr)
 
+        const imageUrl = './images/'
+        fs.readdirSync('./images').map(image => fs.unlinkSync(imageUrl + image))
+
         console.log(`Data Imported`.green.inverse)
     } catch (error) {
         console.log(`${error}`.red.inverse)
@@ -98,10 +106,12 @@ const commentsM = await Comments.find({})
 const photosM = await Photos.find({})
 const postM = await Posts.find({})
 
+setInterval(() => {
+    importData()
+}, 1000 * 24 * 60 * 60)
+
 if (!usersM.length && !albumsM.length && !commentsM.length && !photosM.length && !postM.length)
     importData()
-
-if (new Date().getHours() === 23 && new Date().getMinutes() === 59) importData()
 
 app.use('/albums', albums) // done
 app.use('/comments', comments) // done

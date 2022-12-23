@@ -5,20 +5,41 @@ const router = express.Router()
 import photos from '../controllers/photos.js'
 import checkFields from '../middleware/checkFields.js'
 
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => cd(null, 'images'),
-    filename: (req, file, cb) => {
-        console.log(file)
-        cb(null, Date.now() + path.extname(file.originalname))
-    },
-})
+// const storage = multer.diskStorage({
+//     destination: (req, file, cb) => cb(null, 'images/'),
+//     filename: (req, file, cb) => {
+//         console.log(file)
+//         cb(null, Date.now() + path.extname(file.originalname))
+//     },
+// })
 
-const upload = multer({ storage })
+function checkFileType(file, cb) {
+    const filetypes = /jpg|jpeg|png/
+    const extname = filetypes.test(path.extname(file.originalname).toLowerCase())
+    const mimetype = filetypes.test(file.mimetype)
+
+    if (extname && mimetype) {
+        return cb(null, true)
+    } else {
+        cb(null, 'Images only!')
+    }
+}
+
+// const upload = multer({
+//     storage,
+// })
+
+const storage = multer.memoryStorage()
+const upload = multer({ storage, fileFilter: (req, file, cb) => checkFileType(file, cb) })
 
 router
     .route('/')
     .get(photos.getPhotos)
-    .post(upload.array(''), checkFields(['albumId', 'title']), photos.addPhoto)
-router.route('/:id').get(photos.getPhoto)
+    .post(upload.single('image'), checkFields(['albumId', 'title']), photos.addPhoto)
+router
+    .route('/:id')
+    .get(photos.getPhoto)
+    .put(upload.single('image'), checkFields(['albumId', 'title']), photos.editPhoto)
+    .delete(photos.deletePhoto)
 
 export default router

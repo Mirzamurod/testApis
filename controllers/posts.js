@@ -3,17 +3,21 @@ import Posts from '../models/Posts.js'
 import Users from '../models/Users.js'
 
 const posts = {
-    // @desc    Fetch all Posts
-    // @route   GET /posts
-    // @access  Public
+    /**
+     * @desc    Fetch all Posts
+     * @route   GET /posts
+     * @access  Public
+     */
     getPosts: expressAsyncHandler(async (req, res) => {
         const posts = await Posts.find({})
         res.status(200).json(posts)
     }),
 
-    // @desc    Get post
-    // @route   GET /Posts/:id
-    // @access  Public
+    /**
+     * @desc    Get post
+     * @route   GET /Posts/:id
+     * @access  Public
+     */
     getPost: expressAsyncHandler(async (req, res) => {
         const post = await Posts.findById(req.params.id)
 
@@ -21,9 +25,11 @@ const posts = {
         else res.status(400).json({ message: 'Post not found' })
     }),
 
-    // @desc    Add post
-    // @route   POST /Posts
-    // @access  Public
+    /**
+     * @desc    Add post
+     * @route   POST /Posts
+     * @access  Public
+     */
     addPost: expressAsyncHandler(async (req, res) => {
         const { userId, title, body } = req.body
         const user = await Users.findById(userId)
@@ -36,9 +42,11 @@ const posts = {
         } else res.status(400).json({ message: 'User not found', success: false })
     }),
 
-    // @desc    Edit post
-    // @route   PUT /Posts/:id
-    // @access  Public
+    /**
+     * @desc    Edit post
+     * @route   PUT /Posts/:id
+     * @access  Public
+     */
     editPost: expressAsyncHandler(async (req, res) => {
         const post = await Posts.findById(req.params.id)
 
@@ -59,9 +67,11 @@ const posts = {
         } else res.status(400).json({ message: 'Post not found', success: false })
     }),
 
-    // @desc    Delete post
-    // @route   DELETE /Posts/:id
-    // @access  Public
+    /**
+     * @desc    Delete post
+     * @route   DELETE /Posts/:id
+     * @access  Public
+     */
     deletePost: expressAsyncHandler(async (req, res) => {
         const post = await Posts.findById(req.params.id)
 

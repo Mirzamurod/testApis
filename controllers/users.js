@@ -2,26 +2,32 @@ import expressAsyncHandler from 'express-async-handler'
 import Users from '../models/Users.js'
 
 const users = {
-    // @desc    Fetch all users
-    // @route   GET /users
-    // @access  Public
+    /**
+     * @desc    Fetch all users
+     * @route   GET /users
+     * @access  Public
+     */
     getUsers: expressAsyncHandler(async (req, res) => {
         const users = await Users.find({})
         res.status(200).json(users)
     }),
 
-    // @desc    Get user
-    // @route   GET /users/:id
-    // @access  Public
+    /**
+     * @desc    Get user
+     * @route   GET /users/:id
+     * @access  Public
+     */
     getUser: expressAsyncHandler(async (req, res) => {
         const user = await Users.findById(req.params.id)
         if (user) res.status(200).json(user)
         else res.status(400).json({ message: 'User not found' })
     }),
 
-    // @desc    Add user
-    // @route   POST /users
-    // @access  Public
+    /**
+     * @desc    Add user
+     * @route   POST /users
+     * @access  Public
+     */
     addUser: expressAsyncHandler(async (req, res) => {
         const { name, username, email, address, phone, website, company } = req.body
 
@@ -51,9 +57,11 @@ const users = {
         else res.status(400).json({ message: 'Invalid user data', success: false })
     }),
 
-    // @desc    Edit user
-    // @route   PUT /users/:id
-    // @access  Public
+    /**
+     * @desc    Edit user
+     * @route   PUT /users/:id
+     * @access  Public
+     */
     editUser: expressAsyncHandler(async (req, res) => {
         const user = await Users.findById(req.params.id)
 
@@ -90,9 +98,11 @@ const users = {
         } else res.status(400).json({ message: 'User not found', success: false })
     }),
 
-    // @desc    Delete user
-    // @route   DELETE /users/:id
-    // @access  Public
+    /**
+     * @desc    Delete user
+     * @route   DELETE /users/:id
+     * @access  Public
+     */
     deleteUser: expressAsyncHandler(async (req, res) => {
         const user = Users.findById(req.params.id)
 
