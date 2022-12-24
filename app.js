@@ -1,6 +1,7 @@
 import express from 'express'
 import dotenv from 'dotenv'
 import cors from 'cors'
+import path from 'path'
 import fs from 'fs'
 import colors from 'colors'
 import connectDb from './config/db.js'
@@ -40,9 +41,11 @@ app.use(express.urlencoded({ extended: false }))
 // app.use('/images', express.static('images'))  // /images bosa baseURL/images/imageURL
 app.use(express.static('images')) // bunda baseURL/imageURL
 
-app.get('/', (req, res) =>
-    res.send('<a href="https://github.com/Mirzamurod/testApis/blob/master/README.md">Doc</a>')
-)
+// STATIC PUG
+// app.set('views', path.join(__dirname, 'views'))
+app.set('view engine', 'pug')
+
+app.get('/', (req, res) => res.render('index'))
 
 const importData = async () => {
     try {
