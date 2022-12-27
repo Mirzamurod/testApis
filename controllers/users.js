@@ -8,8 +8,17 @@ const users = {
      * @access  Public
      */
     getUsers: expressAsyncHandler(async (req, res) => {
-        const users = await Users.find({})
-        res.status(200).json(users)
+        const { limit, page } = req.query
+
+        if (+limit && +page) {
+            const users = await Users.find({})
+                .limit(+limit)
+                .skip(+limit * (+page - 1))
+
+            const pageLists = Math.ceil((await Users.find({})).length / limit)
+
+            res.status(200).json({ data: users, pageLists, page })
+        } else res.status(400).json({ message: 'limit and page must be a number' })
     }),
 
     /**

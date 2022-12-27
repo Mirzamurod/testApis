@@ -9,8 +9,17 @@ const posts = {
      * @access  Public
      */
     getPosts: expressAsyncHandler(async (req, res) => {
-        const posts = await Posts.find({})
-        res.status(200).json(posts)
+        const { limit, page } = req.query
+
+        if (+limit && +page) {
+            const posts = await Posts.find({})
+                .limit(+limit)
+                .skip(+limit * (+page - 1))
+
+            const pageLists = Math.ceil((await Posts.find({})).length / limit)
+
+            res.status(200).json({ data: posts, pageLists, page })
+        } else res.status(400).json({ message: 'limit and page must be a number' })
     }),
 
     /**

@@ -12,8 +12,17 @@ const photos = {
      * @access  Public
      */
     getPhotos: expressAsyncHandler(async (req, res) => {
-        const photos = await Photos.find({})
-        res.status(200).json(photos)
+        const { limit, page } = req.query
+
+        if (+limit && +page) {
+            const photos = await Photos.find({})
+                .limit(+limit)
+                .skip(+limit * (+page - 1))
+
+            const pageLists = Math.ceil((await Photos.find({})).length / limit)
+
+            res.status(200).json({ data: photos, pageLists, page })
+        } else res.status(400).json({ message: 'limit and page must be a number' })
     }),
 
     /**

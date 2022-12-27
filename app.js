@@ -118,7 +118,7 @@ if (!usersM.length && !albumsM.length && !commentsM.length && !photosM.length &&
 
 app.use('/albums', albums) // done
 app.use('/comments', comments) // done
-app.use('/photos', photos)
+app.use('/photos', photos) // done
 app.use('/posts', posts) // done
 app.use('/todos', todos) // done
 app.use('/users', users) // done

@@ -9,8 +9,17 @@ const albums = {
      * @access  Public
      */
     getAlbums: expressAsyncHandler(async (req, res) => {
-        const albums = await Albums.find({})
-        res.status(200).json(albums)
+        const { limit, page } = req.query
+
+        if (+limit && +page) {
+            const albums = await Albums.find({})
+                .limit(+limit)
+                .skip(+limit * (+page - 1))
+
+            const pageLists = Math.ceil((await Albums.find({})).length / limit)
+
+            res.status(200).json({ data: albums, pageLists, page })
+        } else res.status(400).json({ message: 'limit and page must be a number' })
     }),
 
     /**

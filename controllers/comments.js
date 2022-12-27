@@ -9,8 +9,17 @@ const comments = {
      * @access  Public
      */
     getComments: expressAsyncHandler(async (req, res) => {
-        const comments = await Comments.find({})
-        res.status(200).json(comments)
+        const { limit, page } = req.query
+
+        if (+limit && +page) {
+            const comments = await Comments.find({})
+                .limit(+limit)
+                .skip(+limit * (+page - 1))
+
+            const pageLists = Math.ceil((await Comments.find({})).length / limit)
+
+            res.status(200).json({ data: comments, pageLists, page })
+        } else res.status(400).json({ message: 'limit and page must be a number' })
     }),
 
     /**

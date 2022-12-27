@@ -9,8 +9,17 @@ const todos = {
      * @access  Public
      */
     getTodos: expressAsyncHandler(async (req, res) => {
-        const todos = await Todos.find({})
-        res.status(200).json(todos)
+        const { limit, page } = req.query
+
+        if (+limit && +page) {
+            const todos = await Todos.find({})
+                .limit(+limit)
+                .skip(+limit * (+page - 1))
+
+            const pageLists = Math.ceil((await Todos.find({})).length / limit)
+
+            res.status(200).json({ data: todos, pageLists, page })
+        } else res.status(400).json({ message: 'limit and page must be a number' })
     }),
 
     /**
