@@ -18,7 +18,10 @@ const users = {
             const pageLists = Math.ceil((await Users.find({})).length / limit)
 
             res.status(200).json({ data: users, pageLists, page })
-        } else res.status(400).json({ message: 'limit and page must be a number' })
+        } else {
+            const users = await Users.find({})
+            res.status(200).json(users)
+        }
     }),
 
     /**

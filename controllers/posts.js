@@ -19,7 +19,10 @@ const posts = {
             const pageLists = Math.ceil((await Posts.find({})).length / limit)
 
             res.status(200).json({ data: posts, pageLists, page })
-        } else res.status(400).json({ message: 'limit and page must be a number' })
+        } else {
+            const posts = await Posts.find({})
+            res.status(200).json(posts)
+        }
     }),
 
     /**

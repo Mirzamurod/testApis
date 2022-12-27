@@ -19,7 +19,10 @@ const albums = {
             const pageLists = Math.ceil((await Albums.find({})).length / limit)
 
             res.status(200).json({ data: albums, pageLists, page })
-        } else res.status(400).json({ message: 'limit and page must be a number' })
+        } else {
+            const albums = await Albums.find({})
+            res.status(200).json(albums)
+        }
     }),
 
     /**

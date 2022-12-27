@@ -19,7 +19,10 @@ const comments = {
             const pageLists = Math.ceil((await Comments.find({})).length / limit)
 
             res.status(200).json({ data: comments, pageLists, page })
-        } else res.status(400).json({ message: 'limit and page must be a number' })
+        } else {
+            const comments = await Comments.find({})
+            res.status(200).json(comments)
+        }
     }),
 
     /**

@@ -22,7 +22,10 @@ const photos = {
             const pageLists = Math.ceil((await Photos.find({})).length / limit)
 
             res.status(200).json({ data: photos, pageLists, page })
-        } else res.status(400).json({ message: 'limit and page must be a number' })
+        } else {
+            const photos = await Photos.find({})
+            res.status(200).json(photos)
+        }
     }),
 
     /**
