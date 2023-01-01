@@ -9,29 +9,66 @@ const posts = {
      * @access  Public
      */
     getPosts: expressAsyncHandler(async (req, res) => {
-        const { limit, page } = req.query
+        const { limit, page, sortName, sortValue, userId, title, body, customSelect } = req.query
+
+        let arrs = {}
+
+        if (typeof customSelect === 'object' && customSelect.length)
+            customSelect.forEach(select => (arrs[select] = 1))
+        else if (typeof customSelect === 'string') arrs[customSelect] = 1
 
         if (+limit && +page) {
-            const posts = await Posts.find({})
+            const posts = await Posts.find(
+                {
+                    userId: { $regex: userId ?? '', $options: 'i' },
+                    title: { $regex: title ?? '', $options: 'i' },
+                    body: { $regex: body ?? '', $options: 'i' },
+                },
+                arrs
+            )
+                .sort(sortValue ? { [sortName]: sortValue } : sortName)
                 .limit(+limit)
                 .skip(+limit * (+page - 1))
 
-            const pageLists = Math.ceil((await Posts.find({})).length / limit)
+            const pageLists = Math.ceil(
+                (
+                    await Posts.find({
+                        userId: { $regex: userId ?? '', $options: 'i' },
+                        title: { $regex: title ?? '', $options: 'i' },
+                        body: { $regex: body ?? '', $options: 'i' },
+                    })
+                ).length / limit
+            )
 
             res.status(200).json({ data: posts, pageLists, page })
         } else {
-            const posts = await Posts.find({})
+            const posts = await Posts.find(
+                {
+                    userId: { $regex: userId ?? '', $options: 'i' },
+                    title: { $regex: title ?? '', $options: 'i' },
+                    body: { $regex: body ?? '', $options: 'i' },
+                },
+                arrs
+            ).sort(sortValue ? { [sortName]: sortValue } : sortName)
             res.status(200).json(posts)
         }
     }),
 
     /**
      * @desc    Get post
-     * @route   GET /Posts/:id
+     * @route   GET /posts/:id
      * @access  Public
      */
     getPost: expressAsyncHandler(async (req, res) => {
-        const post = await Posts.findById(req.params.id)
+        const { customSelect } = req.query
+
+        let arrs = {}
+
+        if (typeof customSelect === 'object' && customSelect.length)
+            customSelect.forEach(select => (arrs[select] = 1))
+        else if (typeof customSelect === 'string') arrs[customSelect] = 1
+
+        const post = await Posts.findById(req.params.id, arrs)
 
         if (post) res.status(200).json(post)
         else res.status(400).json({ message: 'Post not found' })
@@ -39,7 +76,7 @@ const posts = {
 
     /**
      * @desc    Add post
-     * @route   POST /Posts
+     * @route   POST /posts
      * @access  Public
      */
     addPost: expressAsyncHandler(async (req, res) => {
@@ -56,7 +93,7 @@ const posts = {
 
     /**
      * @desc    Edit post
-     * @route   PUT /Posts/:id
+     * @route   PUT /posts/:id
      * @access  Public
      */
     editPost: expressAsyncHandler(async (req, res) => {
@@ -81,7 +118,7 @@ const posts = {
 
     /**
      * @desc    Delete post
-     * @route   DELETE /Posts/:id
+     * @route   DELETE /posts/:id
      * @access  Public
      */
     deletePost: expressAsyncHandler(async (req, res) => {

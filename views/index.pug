@@ -4,6 +4,8 @@ html(lang='en')
         meta(charset='UTF-8')
         meta(http-equiv='X-UA-Compatible' content='IE=edge')
         meta(name='viewport' content='width=device-width, initial-scale=1.0')
+        meta(name='description' content='Test qilish uchun apilar. CRUD hammasi ishlidi')
+        meta(name='keywords' content='api, crud, restapi')
         title Apis for test
         link(rel='stylesheet' href='https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/css/bootstrap.min.css')
         style.
@@ -37,37 +39,49 @@ html(lang='en')
         h1.p-bold.py-3 Test qilish uchun apilar
         h5.mb-5
             | Hamma get requestlar
-            a(href='https://jsonplaceholder.typicode.com/' target='_blank') jsonplaceholder
-            |  saytdan olingan faqat ularga qoshimcha ravishda post, put, delete qoshilgan ya'ni crud
-            |         qilish. Hamma apilar to'liq ishlidi. Siz databasedigi malumotlarga qanaqadir
-            |         o'zgartirish kiritsez u data faqat 1kun databaseda turadi va 1 kundan keyin database
-            |         auto restart bo'ladi. Auto restart bo'lish vohti tahminan kun tugashida bo'ladi yani
-            |         23:59 lar atrofida.
+            a(href='https://jsonplaceholder.typicode.com/' target='_blank')  jsonplaceholder 
+            |             saytdan olingan faqat ularga qoshimcha ravishda post, put, delete qoshilgan ya'ni crud
+            |             qilish. Hamma apilar to'liq ishlidi. Siz databasedigi malumotlarga qanaqadir
+            |             o'zgartirish kiritsez u data faqat 1kun databaseda turadi va 1 kundan keyin database
+            |             auto restart bo'ladi. Auto restart bo'lish vohti tahminan kun tugashida bo'ladi yani
+            |             23:59 lar atrofida.
         hr
-        |  Base URL:
-        button.btn.button.ml-2(data-toggle='tooltip' data-placement='top' title='Copy to clipboard' data-html='true' onclick='copylink()') https://testapi.cyclic.app
+        |         Base URL:
+        button.btn.button.ml-2(data-toggle='tooltip' data-placement='top' title='Copy to clipboard' data-html='true' onclick='copylink()')
+            | https://testapi.cyclic.app
         hr
         // Users
         h3 Users
-        table.table.table-striped.table-bordered
+        table.table.table-striped.table-bordered.table-hover.table-responsive
             thead.thead-dark
                 tr
                     th(scope='col') Route
                     th(scope='col') Params
-                    th(scope='col') HTTP
+                    th(scope='col') Method
+                    th(scope='col') Access
                     th(scope='col') Body
                     th(scope='col') Response success, Status
                     th(scope='col') Response error, Status
-                    th(scope='col') Description
+                    th(scope='col' style='min-width: 461px !important') Description
             tbody
                 tr
                     td
-                        a(href='https://testapi.cyclic.app/users?limit=5&page=1' target='_blank') /users
+                        a(href='https://testapi.cyclic.app/users?limit=5&page=1' target='_blank')
+                            | /users
                     td
                         pre.
-                            { page: number, limit: number }
+                            pagination: {
+                                page: number,
+                                limit: number
+                            },
+                            sort: {
+                                sortName: string,
+                                sortValue: desc | asc
+                            } | sortName,
+                            customSelect: string | string[]
                     td
                         span.badge.badge-success GET
+                    td Public
                     td
                     td
                         pre.
@@ -99,12 +113,29 @@ html(lang='en')
                                 page: number | string,
                             }, 200
                     td
-                    td Get All Users
+                    td
+                        p Get All Users
+                        p
+                            | Datani sort qilish uchun parametrda 1 ta yoki 2 ta key jo'natish kerak.
+                            | Agar 1 ta ya'ni sortName ni o'zini jo'natilsa sortNameda kelayotgan
+                            | value bo'yicha sort qilib beradi, agar sortName bilan sortValue
+                            | jo'natilsa sortNamedigi value bo'yicha sortValuedigi valuega qarab
+                            | pastdan yuqoriga yoki yuqoridan pastga sort qiladi.
+                        p
+                            | customSelect ga string yoki arrayda string jo'natish kerek (agar kerak
+                            | bo'lsa). Uning maqsadi backenddan kelayotgan datani ichidigi o'zizga
+                            | kereli object keylani olish uchun ishlatilinadi.
+                        p
+                            | Batafsil: 
+                            a(title='youtube link' href='/') bu yerda
                 tr
                     td /users/:userId
                     td
+                        pre.
+                            customSelect: string | string[]
                     td
                         span.badge.badge-success GET
+                    td Public
                     td
                     td
                         pre.
@@ -131,13 +162,26 @@ html(lang='en')
                                     bs: string
                                 }
                             }, 200
-                    td { message: 'User not found' }, 400
-                    td Get User
+                    td
+                        pre.
+                            {
+                                message: 'User not found'
+                            }, 400
+                    td
+                        p Get User
+                        p
+                            | customSelect ga string yoki arrayda string jo'natish kerek (agar kerak
+                            | bo'lsa). Uning maqsadi backenddan kelayotgan datani ichidigi o'zizga
+                            | kereli object keylani olish uchun ishlatilinadi.
+                        p
+                            | Batafsil: 
+                            a(title='youtube link' href='/') bu yerda
                 tr
                     td /users
                     td
                     td
                         span.badge.badge-primary POST
+                    td Public
                     td
                         pre.
                             {
@@ -147,14 +191,25 @@ html(lang='en')
                                 phone: string
                                 address: { city: string }
                             }
-                    td { message: 'User added', success: true }, 201
-                    td { message: string | {}, success: false }, 400
+                    td
+                        pre.
+                            {
+                                message: 'User added',
+                                success: true
+                            }, 201
+                    td
+                        pre.
+                            {
+                                message: string | {},
+                                success: false
+                            }, 400
                     td Add User
                 tr
                     td /users/:userId
                     td
                     td
                         span.badge.badge-warning PUT
+                    td Public
                     td
                         pre.
                             {
@@ -165,40 +220,72 @@ html(lang='en')
                                 address: { city: string }
                                 ...
                             }
-                    td { message: 'User updated', success: true }, 200
-                    td { message: string | {}, success: false }, 400
+                    td
+                        pre.
+                            {
+                                message: 'User updated',
+                                success: true
+                            }, 200
+                    td
+                        pre.
+                            {
+                                message: string | {},
+                                success: false
+                            }, 400
                     td Edit User
                 tr
                     td /users/:userId
                     td
                     td
                         span.badge.badge-danger DELETE
+                    td Public
                     td
-                    td { message: 'User deleted', success: true }, 200
-                    td { message: 'User not found', success: false }, 400
+                    td
+                        pre.
+                            {
+                                message: 'User deleted',
+                                success: true
+                            }, 200
+                    td
+                        pre.
+                            {
+                                message: 'User not found',
+                                success: false
+                            }, 400
                     td Delete User
         hr
         // Todos
         h3 Todos
-        table.table.table-striped.table-bordered
+        table.table.table-striped.table-bordered.table-hover.table-responsive
             thead.thead-dark
                 tr
                     th(scope='col') Route
                     th(scope='col') Params
-                    th(scope='col') HTTP
+                    th(scope='col') Method
+                    th(scope='col') Access
                     th(scope='col') Body
                     th(scope='col') Response success, Status
                     th(scope='col') Response error, Status
-                    th(scope='col') Description
+                    th(scope='col' style='min-width: 461px !important') Description
             tbody
                 tr
                     td
-                        a(href='https://testapi.cyclic.app/todos?limit=5&page=1' target='_blank') /todos
+                        a(href='https://testapi.cyclic.app/todos?limit=5&page=1' target='_blank')
+                            | /todos
                     td
                         pre.
-                            { page: number, limit: number }
+                            pagination: {
+                                page: number,
+                                limit: number
+                            },
+                            sort: {
+                                sortName: string,
+                                sortValue: desc | asc
+                            } | sortName,
+                            customSelect: string | string[]
                     td
                         span.badge.badge-success GET
+                    td Public
                     td
                     td
                         pre.
@@ -213,12 +300,29 @@ html(lang='en')
                                 page: number | string,
                             }, 200
                     td
-                    td Get All Todos
+                    td
+                        p Get All Todos
+                        p
+                            | Datani sort qilish uchun parametrda 1 ta yoki 2 ta key jo'natish kerak.
+                            | Agar 1 ta ya'ni sortName ni o'zini jo'natilsa sortNameda kelayotgan
+                            | value bo'yicha sort qilib beradi, agar sortName bilan sortValue
+                            | jo'natilsa sortNamedigi value bo'yicha sortValuedigi valuega qarab
+                            | pastdan yuqoriga yoki yuqoridan pastga sort qiladi.
+                        p
+                            | customSelect ga string yoki arrayda string jo'natish kerek (agar kerak
+                            | bo'lsa). Uning maqsadi backenddan kelayotgan datani ichidigi o'zizga
+                            | kereli object keylani olish uchun ishlatilinadi.
+                        p
+                            | Batafsil: 
+                            a(title='youtube link' href='/') bu yerda
                 tr
                     td /todos/:todoId
                     td
+                        pre.
+                            customSelect: string | string[]
                     td
                         span.badge.badge-success GET
+                    td Public
                     td
                     td
                         pre.
@@ -228,13 +332,26 @@ html(lang='en')
                                 completed: boolean,
                                 userId: string
                             }, 200
-                    td { message: 'Todo not found' }, 400
-                    td Get Todo
+                    td
+                        pre.
+                            {
+                                message: 'Todo not found'
+                            }, 400
+                    td
+                        p Get Todo
+                        p
+                            | customSelect ga string yoki arrayda string jo'natish kerek (agar kerak
+                            | bo'lsa). Uning maqsadi backenddan kelayotgan datani ichidigi o'zizga
+                            | kereli object keylani olish uchun ishlatilinadi.
+                        p
+                            | Batafsil: 
+                            a(title='youtube link' href='/') bu yerda
                 tr
                     td /todos
                     td
                     td
                         span.badge.badge-primary POST
+                    td Public
                     td
                         pre.
                             {
@@ -242,14 +359,25 @@ html(lang='en')
                                 completed: boolean,
                                 userId: string
                             }
-                    td { message: 'Todo added', success: true }, 201
-                    td { message: string | {}, success: false }, 400
+                    td
+                        pre.
+                            {
+                                message: 'Todo added',
+                                success: true
+                            }, 201
+                    td
+                        pre.
+                            {
+                                message: string | {},
+                                success: false
+                            }, 400
                     td Add Todo
                 tr
                     td /todos/:todoId
                     td
                     td
                         span.badge.badge-warning PUT
+                    td Public
                     td
                         pre.
                             {
@@ -258,39 +386,71 @@ html(lang='en')
                                 userId: string
                                 ...
                             }
-                    td { message: 'Todo updated', success: true }, 200
-                    td { message: string | {}, success: false }, 400
+                    td
+                        pre.
+                            {
+                                message: 'Todo updated',
+                                success: true
+                            }, 200
+                    td
+                        pre.
+                            {
+                                message: string | {},
+                                success: false
+                            }, 400
                     td Edit Todo
                 tr
                     td /todos/:todoId
                     td
                     td
                         span.badge.badge-danger DELETE
+                    td Public
                     td
-                    td { message: 'Todo deleted', success: true }, 200
-                    td { message: 'Todo not found', success: false }, 400
+                    td
+                        pre.
+                            {
+                                message: 'Todo deleted',
+                                success: true
+                            }, 200
+                    td
+                        pre.
+                            {
+                                message: 'Todo not found',
+                                success: false
+                            }, 400
                     td Delete Todo
         // Posts
         h3 Posts
-        table.table.table-striped.table-bordered
+        table.table.table-striped.table-bordered.table-hover.table-responsive
             thead.thead-dark
                 tr
                     th(scope='col') Route
                     th(scope='col') Params
-                    th(scope='col') HTTP
+                    th(scope='col') Method
+                    th(scope='col') Access
                     th(scope='col') Body
                     th(scope='col') Response success, Status
                     th(scope='col') Response error, Status
-                    th(scope='col') Description
+                    th(scope='col' style='min-width: 461px !important') Description
             tbody
                 tr
                     td
-                        a(href='https://testapi.cyclic.app/posts?limit=5&page=1' target='_blank') /posts
+                        a(href='https://testapi.cyclic.app/posts?limit=5&page=1' target='_blank')
+                            | /posts
                     td
                         pre.
-                            { page: number, limit: number }
+                            pagination: {
+                                page: number,
+                                limit: number
+                            },
+                            sort: {
+                                sortName: string,
+                                sortValue: desc | asc
+                            } | sortName,
+                            customSelect: string | string[]
                     td
                         span.badge.badge-success GET
+                    td Public
                     td
                     td
                         pre.
@@ -305,12 +465,29 @@ html(lang='en')
                                 page: number | string,
                             }, 200
                     td
-                    td Get All Posts
+                    td
+                        p Get All Posts
+                        p
+                            | Datani sort qilish uchun parametrda 1 ta yoki 2 ta key jo'natish kerak.
+                            | Agar 1 ta ya'ni sortName ni o'zini jo'natilsa sortNameda kelayotgan
+                            | value bo'yicha sort qilib beradi, agar sortName bilan sortValue
+                            | jo'natilsa sortNamedigi value bo'yicha sortValuedigi valuega qarab
+                            | pastdan yuqoriga yoki yuqoridan pastga sort qiladi.
+                        p
+                            | customSelect ga string yoki arrayda string jo'natish kerek (agar kerak
+                            | bo'lsa). Uning maqsadi backenddan kelayotgan datani ichidigi o'zizga
+                            | kereli object keylani olish uchun ishlatilinadi.
+                        p
+                            | Batafsil: 
+                            a(title='youtube link' href='/') bu yerda
                 tr
                     td /posts/:postId
                     td
+                        pre.
+                            customSelect: string | string[]
                     td
                         span.badge.badge-success GET
+                    td Public
                     td
                     td
                         pre.
@@ -320,13 +497,26 @@ html(lang='en')
                                 body: string,
                                 userId: string
                             }, 200
-                    td { message: 'Post not found' }, 400
-                    td Get Post
+                    td
+                        pre.
+                            {
+                                message: 'Post not found'
+                            }, 400
+                    td
+                        p Get Post
+                        p
+                            | customSelect ga string yoki arrayda string jo'natish kerek (agar kerak
+                            | bo'lsa). Uning maqsadi backenddan kelayotgan datani ichidigi o'zizga
+                            | kereli object keylani olish uchun ishlatilinadi.
+                        p
+                            | Batafsil: 
+                            a(title='youtube link' href='/') bu yerda
                 tr
                     td /posts
                     td
                     td
                         span.badge.badge-primary POST
+                    td Public
                     td
                         pre.
                             {
@@ -334,14 +524,25 @@ html(lang='en')
                                 body: string,
                                 userId: string
                             }
-                    td { message: 'Post added', success: true }, 201
-                    td { message: string | {}, success: false }, 400
+                    td
+                        pre.
+                            {
+                                message: 'Post added',
+                                success: true
+                            }, 201
+                    td
+                        pre.
+                            {
+                                message: string | {},
+                                success: false
+                            }, 400
                     td Add Post
                 tr
                     td /posts/:postId
                     td
                     td
                         span.badge.badge-warning PUT
+                    td Public
                     td
                         pre.
                             {
@@ -350,39 +551,71 @@ html(lang='en')
                                 userId: string
                                 ...
                             }
-                    td { message: 'Post updated', success: true }, 200
-                    td { message: string | {}, success: false }, 400
+                    td
+                        pre.
+                            {
+                                message: 'Post updated',
+                                success: true
+                            }, 200
+                    td
+                        pre.
+                            {
+                                message: string | {},
+                                success: false
+                            }, 400
                     td Edit Post
                 tr
                     td /posts/:postId
                     td
                     td
                         span.badge.badge-danger DELETE
+                    td Public
                     td
-                    td { message: 'Post deleted', success: true }, 200
-                    td { message: 'Post not found', success: false }, 400
+                    td
+                        pre.
+                            {
+                                message: 'Post deleted',
+                                success: true
+                            }, 200
+                    td
+                        pre.
+                            {
+                                message: 'Post not found',
+                                success: false
+                            }, 400
                     td Delete Post
         // Comments
         h3 Comments
-        table.table.table-striped.table-bordered
+        table.table.table-striped.table-bordered.table-hover.table-responsive
             thead.thead-dark
                 tr
                     th(scope='col') Route
                     th(scope='col') Params
-                    th(scope='col') HTTP
+                    th(scope='col') Method
+                    th(scope='col') Access
                     th(scope='col') Body
                     th(scope='col') Response success, Status
                     th(scope='col') Response error, Status
-                    th(scope='col') Description
+                    th(scope='col' style='min-width: 411px !important') Description
             tbody
                 tr
                     td
-                        a(href='https://testapi.cyclic.app/comments?limit=5&page=1' target='_blank') /comments
+                        a(href='https://testapi.cyclic.app/comments?limit=5&page=1' target='_blank')
+                            | /comments
                     td
                         pre.
-                            { page: number, limit: number }
+                            pagination: {
+                                page: number,
+                                limit: number
+                            },
+                            sort: {
+                                sortName: string,
+                                sortValue: desc | asc
+                            } | sortName,
+                            customSelect: string | string[]
                     td
                         span.badge.badge-success GET
+                    td Public
                     td
                     td
                         pre.
@@ -398,12 +631,29 @@ html(lang='en')
                                 page: number | string,
                             }, 200
                     td
-                    td Get All Comments
+                    td
+                        p Get All Comments
+                        p
+                            | Datani sort qilish uchun parametrda 1 ta yoki 2 ta key jo'natish kerak.
+                            | Agar 1 ta ya'ni sortName ni o'zini jo'natilsa sortNameda kelayotgan
+                            | value bo'yicha sort qilib beradi, agar sortName bilan sortValue
+                            | jo'natilsa sortNamedigi value bo'yicha sortValuedigi valuega qarab
+                            | pastdan yuqoriga yoki yuqoridan pastga sort qiladi.
+                        p
+                            | customSelect ga string yoki arrayda string jo'natish kerek (agar kerak
+                            | bo'lsa). Uning maqsadi backenddan kelayotgan datani ichidigi o'zizga
+                            | kereli object keylani olish uchun ishlatilinadi.
+                        p
+                            | Batafsil: 
+                            a(title='youtube link' href='/') bu yerda
                 tr
                     td /comments/:commentId
                     td
+                        pre.
+                            customSelect: string | string[]
                     td
                         span.badge.badge-success GET
+                    td Public
                     td
                     td
                         pre.
@@ -414,13 +664,26 @@ html(lang='en')
                                 body: string,
                                 postId: string
                             }, 200
-                    td { message: 'Comment not found' }, 400
-                    td Get Comment
+                    td
+                        pre.
+                            {
+                                message: 'Comment not found'
+                            }, 400
+                    td
+                        p Get Comment
+                        p
+                            | customSelect ga string yoki arrayda string jo'natish kerek (agar kerak
+                            | bo'lsa). Uning maqsadi backenddan kelayotgan datani ichidigi o'zizga
+                            | kereli object keylani olish uchun ishlatilinadi.
+                        p
+                            | Batafsil: 
+                            a(title='youtube link' href='/') bu yerda
                 tr
                     td /comments
                     td
                     td
                         span.badge.badge-primary POST
+                    td Public
                     td
                         pre.
                             {
@@ -429,14 +692,25 @@ html(lang='en')
                                 body: string,
                                 postId: string
                             }
-                    td { message: 'Comment added', success: true }, 201
-                    td { message: string | {}, success: false }, 400
+                    td
+                        pre.
+                            {
+                                message: 'Comment added',
+                                success: true
+                            }, 201
+                    td
+                        pre.
+                            {
+                                message: string | {},
+                                success: false
+                            }, 400
                     td Add Comment
                 tr
                     td /comments/:commentId
                     td
                     td
                         span.badge.badge-warning PUT
+                    td Public
                     td
                         pre.
                             {
@@ -446,39 +720,71 @@ html(lang='en')
                                 postId: string
                                 ...
                             }
-                    td { message: 'Comment updated', success: true }, 200
-                    td { message: string | {}, success: false }, 400
+                    td
+                        pre.
+                            {
+                                message: 'Comment updated',
+                                success: true
+                            }, 200
+                    td
+                        pre.
+                            {
+                                message: string | {},
+                                success: false
+                            }, 400
                     td Edit Comment
                 tr
                     td /comments/:commentId
                     td
                     td
                         span.badge.badge-danger DELETE
+                    td Public
                     td
-                    td { message: 'Comment deleted', success: true }, 200
-                    td { message: 'Comment not found', success: false }, 400
+                    td
+                        pre.
+                            {
+                                message: 'Comment deleted',
+                                success: true
+                            }, 200
+                    td
+                        pre.
+                            {
+                                message: 'Comment not found',
+                                success: false
+                            }, 400
                     td Delete Comment
         // Albums
         h3 Albums
-        table.table.table-striped.table-bordered
+        table.table.table-striped.table-bordered.table-hover.table-responsive
             thead.thead-dark
                 tr
                     th(scope='col') Route
                     th(scope='col') Params
-                    th(scope='col') HTTP
+                    th(scope='col') Method
+                    th(scope='col') Access
                     th(scope='col') Body
                     th(scope='col') Response success, Status
                     th(scope='col') Response error, Status
-                    th(scope='col') Description
+                    th(scope='col' style='min-width: 461px !important') Description
             tbody
                 tr
                     td
-                        a(href='https://testapi.cyclic.app/albums?limit=5&page=1' target='_blank') /albums
+                        a(href='https://testapi.cyclic.app/albums?limit=5&page=1' target='_blank')
+                            | /albums
                     td
                         pre.
-                            { page: number, limit: number }
+                            pagination: {
+                                page: number,
+                                limit: number
+                            },
+                            sort: {
+                                sortName: string,
+                                sortValue: desc | asc
+                            } | sortName,
+                            customSelect: string | string[]
                     td
                         span.badge.badge-success GET
+                    td Public
                     td
                     td
                         pre.
@@ -494,12 +800,29 @@ html(lang='en')
                                 page: number | string,
                             }, 200
                     td
-                    td Get All Albums
+                    td
+                        p Get All Albums
+                        p
+                            | Datani sort qilish uchun parametrda 1 ta yoki 2 ta key jo'natish kerak.
+                            | Agar 1 ta ya'ni sortName ni o'zini jo'natilsa sortNameda kelayotgan
+                            | value bo'yicha sort qilib beradi, agar sortName bilan sortValue
+                            | jo'natilsa sortNamedigi value bo'yicha sortValuedigi valuega qarab
+                            | pastdan yuqoriga yoki yuqoridan pastga sort qiladi.
+                        p
+                            | customSelect ga string yoki arrayda string jo'natish kerek (agar kerak
+                            | bo'lsa). Uning maqsadi backenddan kelayotgan datani ichidigi o'zizga
+                            | kereli object keylani olish uchun ishlatilinadi.
+                        p
+                            | Batafsil: 
+                            a(title='youtube link' href='/') bu yerda
                 tr
                     td /albums/:albumId
                     td
+                        pre.
+                            customSelect: string | string[]
                     td
                         span.badge.badge-success GET
+                    td Public
                     td
                     td
                         pre.
@@ -510,13 +833,26 @@ html(lang='en')
                                 body: string,
                                 postId: string
                             }, 200
-                    td { message: 'Album not found' }, 400
-                    td Get Album
+                    td
+                        pre.
+                            {
+                                message: 'Album not found'
+                            }, 400
+                    td
+                        p Get Album
+                        p
+                            | customSelect ga string yoki arrayda string jo'natish kerek (agar kerak
+                            | bo'lsa). Uning maqsadi backenddan kelayotgan datani ichidigi o'zizga
+                            | kereli object keylani olish uchun ishlatilinadi.
+                        p
+                            | Batafsil: 
+                            a(title='youtube link' href='/') bu yerda
                 tr
                     td /albums
                     td
                     td
                         span.badge.badge-primary POST
+                    td Public
                     td
                         pre.
                             {
@@ -525,14 +861,25 @@ html(lang='en')
                                 body: string,
                                 postId: string
                             }
-                    td { message: 'Album added', success: true }, 200
-                    td { message: string | {}, success: false }, 400
+                    td
+                        pre.
+                            {
+                                message: 'Album added',
+                                success: true
+                            }, 200
+                    td
+                        pre.
+                            {
+                                message: string | {},
+                                success: false
+                            }, 400
                     td Add Album
                 tr
                     td /albums/:albumId
                     td
                     td
                         span.badge.badge-warning PUT
+                    td Public
                     td
                         pre.
                             {
@@ -542,39 +889,71 @@ html(lang='en')
                                 postId: string
                                 ...
                             }
-                    td { message: 'Album updated', success: true }, 200
-                    td { message: string | {}, success: false }, 400
+                    td
+                        pre.
+                            {
+                                message: 'Album updated',
+                                success: true
+                            }, 200
+                    td
+                        pre.
+                            {
+                                message: string | {},
+                                success: false
+                            }, 400
                     td Edit Album
                 tr
                     td /albums/:albumId
                     td
                     td
                         span.badge.badge-danger DELETE
+                    td Public
                     td
-                    td { message: 'Album deleted', success: true }, 200
-                    td { message: 'Album not found', success: false }, 400
+                    td
+                        pre.
+                            {
+                                message: 'Album deleted',
+                                success: true
+                            }, 200
+                    td
+                        pre.
+                            {
+                                message: 'Album not found',
+                                success: false
+                            }, 400
                     td Delete Album
         // Photos
         h3 Photos
-        table.table.table-striped.table-bordered
+        table.table.table-striped.table-bordered.table-hover.table-responsive
             thead.thead-dark
                 tr
                     th(scope='col') Route
                     th(scope='col') Params
-                    th(scope='col') HTTP
+                    th(scope='col') Method
+                    th(scope='col') Access
                     th(scope='col') Body
                     th(scope='col') Response success, Status
                     th(scope='col') Response error, Status
-                    th(scope='col') Description
+                    th(scope='col' style='min-width: 461px !important') Description
             tbody
                 tr
                     td
-                        a(href='https://testapi.cyclic.app/photos?limit=5&page=1' target='_blank') /photos
+                        a(href='https://testapi.cyclic.app/photos?limit=5&page=1' target='_blank')
+                            | /photos
                     td
                         pre.
-                            { page: number, limit: number }
+                            pagination: {
+                                page: number,
+                                limit: number
+                            },
+                            sort: {
+                                sortName: string,
+                                sortValue: desc | asc
+                            } | sortName,
+                            customSelect: string | string[]
                     td
                         span.badge.badge-success GET
+                    td Public
                     td
                     td
                         pre.
@@ -590,12 +969,29 @@ html(lang='en')
                                 page: number | string,
                             }, 200
                     td
-                    td Get All Photos
+                    td
+                        p Get All Photos
+                        p
+                            | Datani sort qilish uchun parametrda 1 ta yoki 2 ta key jo'natish kerak.
+                            | Agar 1 ta ya'ni sortName ni o'zini jo'natilsa sortNameda kelayotgan
+                            | value bo'yicha sort qilib beradi, agar sortName bilan sortValue
+                            | jo'natilsa sortNamedigi value bo'yicha sortValuedigi valuega qarab
+                            | pastdan yuqoriga yoki yuqoridan pastga sort qiladi.
+                        p
+                            | customSelect ga string yoki arrayda string jo'natish kerek (agar kerak
+                            | bo'lsa). Uning maqsadi backenddan kelayotgan datani ichidigi o'zizga
+                            | kereli object keylani olish uchun ishlatilinadi.
+                        p
+                            | Batafsil: 
+                            a(title='youtube link' href='/') bu yerda
                 tr
                     td /photos/:photoId
                     td
+                        pre.
+                            customSelect: string | string[]
                     td
                         span.badge.badge-success GET
+                    td Public
                     td
                     td
                         pre.
@@ -605,57 +1001,107 @@ html(lang='en')
                                 thumbnailUrl: string,
                                 albumId: string
                             }, 200
-                    td { message: 'Photo not found' }, 400
-                    td Get Photo
+                    td
+                        pre.
+                            {
+                                message: 'Photo not found'
+                            }, 400
+                    td
+                        p Get Photo
+                        p
+                            | customSelect ga string yoki arrayda string jo'natish kerek (agar kerak
+                            | bo'lsa). Uning maqsadi backenddan kelayotgan datani ichidigi o'zizga
+                            | kereli object keylani olish uchun ishlatilinadi.
+                        p
+                            | Batafsil: 
+                            a(title='youtube link' href='/') bu yerda
                 tr
                     td /photos
                     td
                     td
                         span.badge.badge-primary POST
+                    td Public
                     td
                         pre.
                             {
                                 albumId: string,
                                 title: string,
-                                image: jpeg|jpg|png
+                                image: jpeg | jpg | png
                             }
-                    td { message: 'Album added', success: true }, 201
-                    td { message: string | {}, success: false }, 400
+                    td
+                        pre.
+                            {
+                                message: 'Album added',
+                                success: true
+                            }, 201
+                    td
+                        pre.
+                            {
+                                message: string | {},
+                                success: false
+                            }, 400
                     td Add Photo
                 tr
                     td /photos/:photoId
                     td
                     td
                         span.badge.badge-warning PUT
+                    td Public
                     td
                         pre.
                             {
                                 albumId: string,
                                 title: string,
-                                image: jpeg|jpg|png
+                                image: jpeg | jpg | png
                                 ...
                             }
-                    td { message: 'Photo updated', success: true }, 200
-                    td { message: string | {}, success: false }, 400
+                    td
+                        pre.
+                            {
+                                message: 'Photo updated',
+                                success: true
+                            }, 200
+                    td
+                        pre.
+                            {
+                                message: string | {},
+                                success: false
+                            }, 400
                     td Edit Photo
                 tr
                     td /photos/:photoId
                     td
                     td
                         span.badge.badge-danger DELETE
+                    td Public
                     td
-                    td { message: 'Photo deleted', success: true }, 200
-                    td { message: 'Photo not found', success: false }, 400
+                    td
+                        pre.
+                            {
+                                message: 'Photo deleted',
+                                success: true
+                            }, 200
+                    td
+                        pre.
+                            {
+                                message: 'Photo not found',
+                                success: false
+                            }, 400
                     td Delete Photo
         hr
-        p
-            | Author: 
-            a(href='https://t.me/MaSTeR_R_M' target='_blank') Mirzamurod
+        .d-md-flex.justify-content-between
+            p
+                | Author: 
+                a(href='https://github.com/Mirzamurod' target='_blank') Mirzamurod
+            a(href='https://github.com/Mirzamurod/testApis/issues' target='_blank') For Issues
+            p
+                | Powered by:
+                a(href='https://www.instagram.com/setapp_uz/' target='_blank') SetApp
         script(src='https://code.jquery.com/jquery-3.3.1.slim.min.js')
         script(src='https://cdn.jsdelivr.net/npm/popper.js@1.14.3/dist/umd/popper.min.js')
         script(src='https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/js/bootstrap.min.js')
         script.
-            $(function() {
+            $(function () {
             $('[data-toggle="tooltip"]').tooltip()
             })
             const copylink = () => {

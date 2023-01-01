@@ -8,18 +8,64 @@ const users = {
      * @access  Public
      */
     getUsers: expressAsyncHandler(async (req, res) => {
-        const { limit, page } = req.query
+        const {
+            limit,
+            page,
+            sortName,
+            sortValue,
+            name,
+            username,
+            email,
+            phone,
+            website,
+            customSelect,
+        } = req.query
+
+        let arrs = {}
+
+        if (typeof customSelect === 'object' && customSelect.length)
+            customSelect.forEach(select => (arrs[select] = 1))
+        else if (typeof customSelect === 'string') arrs[customSelect] = 1
 
         if (+limit && +page) {
-            const users = await Users.find({})
+            const users = await Users.find(
+                {
+                    name: { $regex: name ?? '', $options: 'i' },
+                    username: { $regex: username ?? '', $options: 'i' },
+                    email: { $regex: email ?? '', $options: 'i' },
+                    phone: { $regex: phone ?? '', $options: 'i' },
+                    website: { $regex: website ?? '', $options: 'i' },
+                },
+                arrs
+            )
+                .sort(sortValue ? { [sortName]: sortValue } : sortName)
                 .limit(+limit)
                 .skip(+limit * (+page - 1))
 
-            const pageLists = Math.ceil((await Users.find({})).length / limit)
+            const pageLists = Math.ceil(
+                (
+                    await Users.find({
+                        name: { $regex: name ?? '', $options: 'i' },
+                        username: { $regex: username ?? '', $options: 'i' },
+                        email: { $regex: email ?? '', $options: 'i' },
+                        phone: { $regex: phone ?? '', $options: 'i' },
+                        website: { $regex: website ?? '', $options: 'i' },
+                    })
+                ).length / limit
+            )
 
             res.status(200).json({ data: users, pageLists, page })
         } else {
-            const users = await Users.find({})
+            const users = await Users.find(
+                {
+                    name: { $regex: name ?? '', $options: 'i' },
+                    username: { $regex: username ?? '', $options: 'i' },
+                    email: { $regex: email ?? '', $options: 'i' },
+                    phone: { $regex: phone ?? '', $options: 'i' },
+                    website: { $regex: website ?? '', $options: 'i' },
+                },
+                arrs
+            ).sort(sortValue ? { [sortName]: sortValue } : sortName)
             res.status(200).json(users)
         }
     }),
@@ -30,7 +76,15 @@ const users = {
      * @access  Public
      */
     getUser: expressAsyncHandler(async (req, res) => {
-        const user = await Users.findById(req.params.id)
+        const { customSelect } = req.query
+
+        let arrs = {}
+
+        if (typeof customSelect === 'object' && customSelect.length)
+            customSelect.forEach(select => (arrs[select] = 1))
+        else if (typeof customSelect === 'string') arrs[customSelect] = 1
+
+        const user = await Users.findById(req.params.id, arrs)
         if (user) res.status(200).json(user)
         else res.status(400).json({ message: 'User not found' })
     }),

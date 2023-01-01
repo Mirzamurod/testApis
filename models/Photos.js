@@ -7,9 +7,7 @@ const PhotosSchema = mongoose.Schema(
         url: { type: String, required: true },
         thumbnailUrl: { type: String, required: true },
     },
-    {
-        timestamps: false,
-    }
+    { timestamps: true }
 )
 
 const Photos = mongoose.model('Photos', PhotosSchema)

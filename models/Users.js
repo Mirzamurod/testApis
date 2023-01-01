@@ -27,9 +27,7 @@ const UsersSchema = mongoose.Schema(
             bs: { type: String, required: true, default: 'harness real-time e-markets' },
         },
     },
-    {
-        timestamps: false,
-    }
+    { timestamps: true }
 )
 
 const Users = mongoose.model('Users', UsersSchema)

@@ -6,9 +6,7 @@ const TodosSchema = mongoose.Schema(
         title: { type: String, required: true },
         completed: { type: Boolean, required: true },
     },
-    {
-        timestamps: false,
-    }
+    { timestamps: true }
 )
 
 const Todos = mongoose.model('Todos', TodosSchema)

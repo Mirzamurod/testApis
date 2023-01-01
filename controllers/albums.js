@@ -9,18 +9,44 @@ const albums = {
      * @access  Public
      */
     getAlbums: expressAsyncHandler(async (req, res) => {
-        const { limit, page } = req.query
+        const { limit, page, sortName, sortValue, userId, title, customSelect } = req.query
+
+        let arrs = {}
+
+        if (typeof customSelect === 'object' && customSelect.length)
+            customSelect.forEach(select => (arrs[select] = 1))
+        else if (typeof customSelect === 'string') arrs[customSelect] = 1
 
         if (+limit && +page) {
-            const albums = await Albums.find({})
+            const albums = await Albums.find(
+                {
+                    userId: { $regex: userId ?? '', $options: 'i' },
+                    title: { $regex: title ?? '', $options: 'i' },
+                },
+                arrs
+            )
+                .sort(sortValue ? { [sortName]: sortValue } : sortName)
                 .limit(+limit)
                 .skip(+limit * (+page - 1))
 
-            const pageLists = Math.ceil((await Albums.find({})).length / limit)
+            const pageLists = Math.ceil(
+                (
+                    await Albums.find({
+                        userId: { $regex: userId ?? '', $options: 'i' },
+                        title: { $regex: title ?? '', $options: 'i' },
+                    })
+                ).length / limit
+            )
 
             res.status(200).json({ data: albums, pageLists, page })
         } else {
-            const albums = await Albums.find({})
+            const albums = await Albums.find(
+                {
+                    userId: { $regex: userId ?? '', $options: 'i' },
+                    title: { $regex: title ?? '', $options: 'i' },
+                },
+                arrs
+            ).sort(sortValue ? { [sortName]: sortValue } : sortName)
             res.status(200).json(albums)
         }
     }),
@@ -31,6 +57,14 @@ const albums = {
      * @access  Public
      */
     getAlbum: expressAsyncHandler(async (req, res) => {
+        const { customSelect } = req.query
+
+        let arrs = {}
+
+        if (typeof customSelect === 'object' && customSelect.length)
+            customSelect.forEach(select => (arrs[select] = 1))
+        else if (typeof customSelect === 'string') arrs[customSelect] = 1
+
         const album = await Albums.findById(req.params.id)
 
         if (album) res.status(200).json(album)

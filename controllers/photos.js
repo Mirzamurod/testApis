@@ -8,33 +8,67 @@ import Albums from './../models/Albums.js'
 const photos = {
     /**
      * @desc    Fetch all Photos
-     * @route   GET /Photos
+     * @route   GET /photos
      * @access  Public
      */
     getPhotos: expressAsyncHandler(async (req, res) => {
-        const { limit, page } = req.query
+        const { limit, page, sortName, sortValue, albumId, title, customSelect } = req.query
+
+        let arrs = {}
+
+        if (typeof customSelect === 'object' && customSelect.length)
+            customSelect.forEach(select => (arrs[select] = 1))
+        else if (typeof customSelect === 'string') arrs[customSelect] = 1
 
         if (+limit && +page) {
-            const photos = await Photos.find({})
+            const photos = await Photos.find(
+                {
+                    albumId: { $regex: albumId ?? '', $options: 'i' },
+                    title: { $regex: title ?? '', $options: 'i' },
+                },
+                arrs
+            )
+                .sort(sortValue ? { [sortName]: sortValue } : sortName)
                 .limit(+limit)
                 .skip(+limit * (+page - 1))
 
-            const pageLists = Math.ceil((await Photos.find({})).length / limit)
+            const pageLists = Math.ceil(
+                (
+                    await Photos.find({
+                        albumId: { $regex: albumId ?? '', $options: 'i' },
+                        title: { $regex: title ?? '', $options: 'i' },
+                    })
+                ).length / limit
+            )
 
             res.status(200).json({ data: photos, pageLists, page })
         } else {
-            const photos = await Photos.find({})
+            const photos = await Photos.find(
+                {
+                    albumId: { $regex: albumId ?? '', $options: 'i' },
+                    title: { $regex: title ?? '', $options: 'i' },
+                },
+                arrs
+            ).sort(sortValue ? { [sortName]: sortValue } : sortName)
             res.status(200).json(photos)
         }
     }),
 
     /**
      * @desc    Get photo
-     * @route   GET /Photos/:id
+     * @route   GET /photos/:id
      * @access  Public
      */
     getPhoto: expressAsyncHandler(async (req, res) => {
-        const photo = await Photos.findById(req.params.id)
+        const { customSelect } = req.query
+
+        let arrs = {}
+
+        if (typeof customSelect === 'object' && customSelect.length)
+            customSelect.forEach(select => (arrs[select] = 1))
+        else if (typeof customSelect === 'string') arrs[customSelect] = 1
+
+        const photo = await Photos.findById(req.params.id, arrs)
 
         if (photo) res.status(200).json(photo)
         else res.status(400).json({ message: 'Photo not found' })
@@ -42,7 +76,7 @@ const photos = {
 
     /**
      * @desc    Add photo
-     * @route   POST /Photos
+     * @route   POST /photos
      * @access  Public
      */
     addPhoto: expressAsyncHandler(async (req, res) => {
@@ -91,7 +125,7 @@ const photos = {
 
     /**
      * @desc    Edit photo
-     * @route   PUT /Photos/:id
+     * @route   PUT /photos/:id
      * @access  Public
      */
     editPhoto: expressAsyncHandler(async (req, res) => {
@@ -159,7 +193,7 @@ const photos = {
 
     /**
      * @desc    Delete photo
-     * @route   DELETE /Photos/:id
+     * @route   DELETE /photos/:id
      * @access  Public
      */
     deletePhoto: expressAsyncHandler(async (req, res) => {

@@ -5,9 +5,7 @@ const AlbumsSchema = mongoose.Schema(
         userId: { type: String, required: true },
         title: { type: String, required: true },
     },
-    {
-        timestamps: false,
-    }
+    { timestamps: true }
 )
 
 const Albums = mongoose.model('Albums', AlbumsSchema)

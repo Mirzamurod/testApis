@@ -7,9 +7,7 @@ const CommentsSchema = mongoose.Schema(
         email: { type: String, required: true },
         body: { type: String, required: true },
     },
-    {
-        timestamps: false,
-    }
+    { timestamps: true }
 )
 
 const Comments = mongoose.model('Comments', CommentsSchema)

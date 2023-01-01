@@ -9,18 +9,51 @@ const comments = {
      * @access  Public
      */
     getComments: expressAsyncHandler(async (req, res) => {
-        const { limit, page } = req.query
+        const { limit, page, sortName, sortValue, postId, name, email, body, customSelect } =
+            req.query
+
+        let arrs = {}
+
+        if (typeof customSelect === 'object' && customSelect.length)
+            customSelect.forEach(select => (arrs[select] = 1))
+        else if (typeof customSelect === 'string') arrs[customSelect] = 1
 
         if (+limit && +page) {
-            const comments = await Comments.find({})
+            const comments = await Comments.find(
+                {
+                    postId: { $regex: postId ?? '', $options: 'i' },
+                    name: { $regex: name ?? '', $options: 'i' },
+                    email: { $regex: email ?? '', $options: 'i' },
+                    body: { $regex: body ?? '', $options: 'i' },
+                },
+                arrs
+            )
+                .sort(sortValue ? { [sortName]: sortValue } : sortName)
                 .limit(+limit)
                 .skip(+limit * (+page - 1))
 
-            const pageLists = Math.ceil((await Comments.find({})).length / limit)
+            const pageLists = Math.ceil(
+                (
+                    await Comments.find({
+                        postId: { $regex: postId ?? '', $options: 'i' },
+                        name: { $regex: name ?? '', $options: 'i' },
+                        email: { $regex: email ?? '', $options: 'i' },
+                        body: { $regex: body ?? '', $options: 'i' },
+                    })
+                ).length / limit
+            )
 
             res.status(200).json({ data: comments, pageLists, page })
         } else {
-            const comments = await Comments.find({})
+            const comments = await Comments.find(
+                {
+                    postId: { $regex: postId ?? '', $options: 'i' },
+                    name: { $regex: name ?? '', $options: 'i' },
+                    email: { $regex: email ?? '', $options: 'i' },
+                    body: { $regex: body ?? '', $options: 'i' },
+                },
+                arrs
+            ).sort(sortValue ? { [sortName]: sortValue } : sortName)
             res.status(200).json(comments)
         }
     }),
@@ -31,7 +64,15 @@ const comments = {
      * @access  Public
      */
     getComment: expressAsyncHandler(async (req, res) => {
-        const comment = await Comments.findById(req.params.id)
+        const { customSelect } = req.query
+
+        let arrs = {}
+
+        if (typeof customSelect === 'object' && customSelect.length)
+            customSelect.forEach(select => (arrs[select] = 1))
+        else if (typeof customSelect === 'string') arrs[customSelect] = 1
+
+        const comment = await Comments.findById(req.params.id, arrs)
 
         if (comment) res.status(200).json(comment)
         else res.status(400).json({ message: 'Comment not found' })

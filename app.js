@@ -1,7 +1,6 @@
 import express from 'express'
 import dotenv from 'dotenv'
 import cors from 'cors'
-import path from 'path'
 import fs from 'fs'
 import colors from 'colors'
 import connectDb from './config/db.js'

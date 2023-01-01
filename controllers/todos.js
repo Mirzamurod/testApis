@@ -9,18 +9,44 @@ const todos = {
      * @access  Public
      */
     getTodos: expressAsyncHandler(async (req, res) => {
-        const { limit, page } = req.query
+        const { limit, page, sortName, sortValue, userId, title, customSelect } = req.query
+
+        let arrs = {}
+
+        if (typeof customSelect === 'object' && customSelect.length)
+            customSelect.forEach(select => (arrs[select] = 1))
+        else if (typeof customSelect === 'string') arrs[customSelect] = 1
 
         if (+limit && +page) {
-            const todos = await Todos.find({})
+            const todos = await Todos.find(
+                {
+                    userId: { $regex: userId ?? '', $options: 'i' },
+                    title: { $regex: title ?? '', $options: 'i' },
+                },
+                arrs
+            )
+                .sort(sortValue ? { [sortName]: sortValue } : sortName)
                 .limit(+limit)
                 .skip(+limit * (+page - 1))
 
-            const pageLists = Math.ceil((await Todos.find({})).length / limit)
+            const pageLists = Math.ceil(
+                (
+                    await Todos.find({
+                        userId: { $regex: userId ?? '', $options: 'i' },
+                        title: { $regex: title ?? '', $options: 'i' },
+                    })
+                ).length / limit
+            )
 
             res.status(200).json({ data: todos, pageLists, page })
         } else {
-            const todos = await Todos.find({})
+            const todos = await Todos.find(
+                {
+                    userId: { $regex: userId ?? '', $options: 'i' },
+                    title: { $regex: title ?? '', $options: 'i' },
+                },
+                arrs
+            ).sort(sortValue ? { [sortName]: sortValue } : sortName)
             res.status(200).json(todos)
         }
     }),
@@ -31,7 +57,15 @@ const todos = {
      * @access  Public
      */
     getTodo: expressAsyncHandler(async (req, res) => {
-        const todo = await Todos.findById(req.params.id)
+        const { customSelect } = req.query
+
+        let arrs = {}
+
+        if (typeof customSelect === 'object' && customSelect.length)
+            customSelect.forEach(select => (arrs[select] = 1))
+        else if (typeof customSelect === 'string') arrs[customSelect] = 1
+
+        const todo = await Todos.findById(req.params.id, arrs)
         if (todo) res.status(200).json(todo)
         else res.status(400).json({ message: 'Todo not found' })
     }),

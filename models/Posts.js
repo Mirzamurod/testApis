@@ -6,9 +6,7 @@ const PostsSchema = mongoose.Schema(
         title: { type: String, required: true },
         body: { type: String, required: true },
     },
-    {
-        timestamps: false,
-    }
+    { timestamps: true }
 )
 
 const Posts = mongoose.model('Posts', PostsSchema)
