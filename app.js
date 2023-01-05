@@ -12,6 +12,13 @@ import photos from './routes/photos.js'
 import posts from './routes/posts.js'
 import todos from './routes/todos.js'
 import users from './routes/users.js'
+import albumsAuth from './routes/albumsAuth.js'
+import commentsAuth from './routes/commentsAuth.js'
+import photosAuth from './routes/photosAuth.js'
+import postsAuth from './routes/postsAuth.js'
+import todosAuth from './routes/todosAuth.js'
+import usersAuth from './routes/usersAuth.js'
+import person from './routes/person.js'
 
 // Models
 import Albums from './models/Albums.js'
@@ -28,6 +35,7 @@ import photosData from './data/photos.js'
 import postsData from './data/posts.js'
 import todosData from './data/todos.js'
 import usersData from './data/users.js'
+import Person from './models/Person.js'
 
 const app = express()
 
@@ -54,6 +62,7 @@ const importData = async () => {
         await Posts.deleteMany()
         await Todos.deleteMany()
         await Users.deleteMany()
+        await Person.deleteMany()
 
         // users
         const createdUsers = await Users.insertMany(usersData)
@@ -121,6 +130,13 @@ app.use('/photos', photos) // done
 app.use('/posts', posts) // done
 app.use('/todos', todos) // done
 app.use('/users', users) // done
+app.use('/authalbums', albumsAuth) // done
+app.use('/authcomments', commentsAuth) // done
+app.use('/authphotos', photosAuth) // done
+app.use('/authposts', postsAuth) // done
+app.use('/authtodos', todosAuth) // done
+app.use('/authusers', usersAuth) // done
+app.use('/user', person) // done
 
 app.listen(process.env.PORT || 5000, () =>
     console.log(`Server started on port -- ${process.env.PORT}`.yellow.bold)

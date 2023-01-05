@@ -10,6 +10,7 @@ import Photos from './models/Photos.js'
 import Posts from './models/Posts.js'
 import Todos from './models/Todos.js'
 import Users from './models/Users.js'
+import Person from './models/Person.js'
 
 // data
 import albumsData from './data/albums.js'
@@ -31,6 +32,7 @@ const importData = async () => {
         await Posts.deleteMany()
         await Todos.deleteMany()
         await Users.deleteMany()
+        await Person.deleteMany()
 
         // users
         const createdUsers = await Users.insertMany(usersData)
@@ -89,6 +91,7 @@ const destroyData = async () => {
         await Posts.deleteMany()
         await Todos.deleteMany()
         await Users.deleteMany()
+        await Person.deleteMany()
 
         console.log('Data Destroyed!'.red.inverse)
         process.exit()

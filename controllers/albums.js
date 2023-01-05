@@ -65,7 +65,7 @@ const albums = {
             customSelect.forEach(select => (arrs[select] = 1))
         else if (typeof customSelect === 'string') arrs[customSelect] = 1
 
-        const album = await Albums.findById(req.params.id)
+        const album = await Albums.findById(req.params.id, arrs)
 
         if (album) res.status(200).json(album)
         else res.status(400).json({ message: 'Album not found' })
