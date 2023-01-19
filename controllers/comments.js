@@ -84,6 +84,11 @@ const comments = {
      * @access  Public
      */
     addComment: expressAsyncHandler(async (req, res) => {
+        const errors = validationResult(req)
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ message: errors.array(), success: false })
+        }
+
         const { postId, name, email, body } = req.body
         const post = await Posts.findById(postId)
 
@@ -92,7 +97,11 @@ const comments = {
 
             if (addedComment) res.status(201).json({ message: 'Comment added', success: true })
             else res.status(400).json({ message: 'Invalid comment data', success: false })
-        } else res.status(400).json({ message: 'Post not found', success: false })
+        } else
+            res.status(400).json({
+                message: [{ msg: 'Post not found', param: 'postId' }],
+                success: false,
+            })
     }),
 
     /**
@@ -101,6 +110,11 @@ const comments = {
      * @access  Public
      */
     editComment: expressAsyncHandler(async (req, res) => {
+        const errors = validationResult(req)
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ message: errors.array(), success: false })
+        }
+
         const comment = await Comments.findById(req.params.id)
 
         if (comment) {
@@ -117,7 +131,11 @@ const comments = {
                 if (updateComment)
                     res.status(200).json({ message: 'Comment updated', success: true })
                 else res.status(400).json({ message: 'Invalid comment data', success: false })
-            } else res.status(400).json({ message: 'Post not found', success: false })
+            } else
+                res.status(400).json({
+                    message: [{ msg: 'Post not found', param: 'postId' }],
+                    success: false,
+                })
         } else res.status(400).json({ message: 'Comment not found', success: false })
     }),
 

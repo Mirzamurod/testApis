@@ -3,7 +3,7 @@ import multer from 'multer'
 import path from 'path'
 const router = express.Router()
 import photos from '../controllers/photos.js'
-import checkFields from '../middleware/checkFields.js'
+import { photoField } from '../middleware/checkFields.js'
 
 // const storage = multer.diskStorage({
 //     destination: (req, file, cb) => cb(null, 'images/'),
@@ -32,14 +32,11 @@ function checkFileType(file, cb) {
 const storage = multer.memoryStorage()
 const upload = multer({ storage, fileFilter: (req, file, cb) => checkFileType(file, cb) })
 
-router
-    .route('/')
-    .get(photos.getPhotos)
-    .post(upload.single('image'), checkFields(['albumId', 'title']), photos.addPhoto)
+router.route('/').get(photos.getPhotos).post(upload.single('image'), photoField, photos.addPhoto)
 router
     .route('/:id')
     .get(photos.getPhoto)
-    .put(upload.single('image'), checkFields(['albumId', 'title']), photos.editPhoto)
+    .put(upload.single('image'), photoField, photos.editPhoto)
     .delete(photos.deletePhoto)
 
 export default router

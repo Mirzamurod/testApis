@@ -1,4 +1,5 @@
 import expressAsyncHandler from 'express-async-handler'
+import { validationResult } from 'express-validator'
 import Todos from '../models/Todos.js'
 import Users from '../models/Users.js'
 
@@ -76,14 +77,23 @@ const todos = {
      * @access  Public
      */
     addTodo: expressAsyncHandler(async (req, res) => {
+        const errors = validationResult(req)
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ message: errors.array(), success: false })
+        }
+
         const { userId, title, completed } = req.body
         const user = await Users.findById(userId)
 
         if (user) {
             const addedTodo = await Todos.create({ userId, title, completed })
             if (addedTodo) res.status(201).json({ message: 'Todo added', success: true })
-            else res.status(400).json({ message: 'Invalid user data', success: false })
-        } else res.status(400).json({ message: 'User not found', success: false })
+            else res.status(400).json({ message: 'Invalid todo data', success: false })
+        } else
+            res.status(400).json({
+                message: [{ msg: 'User not found', param: 'userId' }],
+                success: false,
+            })
     }),
 
     /**
@@ -92,6 +102,11 @@ const todos = {
      * @access  Public
      */
     editTodo: expressAsyncHandler(async (req, res) => {
+        const errors = validationResult(req)
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ message: errors.array(), success: false })
+        }
+
         const todo = await Todos.findById(req.params.id)
 
         if (todo) {
@@ -106,7 +121,11 @@ const todos = {
 
                 if (updateTodo) res.status(200).json({ message: 'Todo updated', success: true })
                 else res.status(400).json({ message: 'Invalid todo data', success: false })
-            } else res.status(400).json({ message: 'User not found', success: false })
+            } else
+                res.status(400).json({
+                    message: [{ msg: 'User not found', param: 'userId' }],
+                    success: false,
+                })
         } else res.status(400).json({ message: 'Todo not found', success: false })
     }),
 

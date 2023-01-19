@@ -2,6 +2,7 @@ import expressAsyncHandler from 'express-async-handler'
 import sharp from 'sharp'
 import path from 'path'
 import fs from 'fs/promises'
+import { validationResult } from 'express-validator'
 import Photos from '../models/Photos.js'
 import Albums from './../models/Albums.js'
 
@@ -80,6 +81,11 @@ const photos = {
      * @access  Public
      */
     addPhoto: expressAsyncHandler(async (req, res) => {
+        const errors = validationResult(req)
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ message: errors.array(), success: false })
+        }
+
         const { albumId, title } = req.body
 
         if (req.file) {
@@ -129,6 +135,11 @@ const photos = {
      * @access  Public
      */
     editPhoto: expressAsyncHandler(async (req, res) => {
+        const errors = validationResult(req)
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ message: errors.array(), success: false })
+        }
+
         const photo = await Photos.findById(req.params.id)
 
         if (photo) {

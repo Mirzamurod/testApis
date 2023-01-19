@@ -1,4 +1,5 @@
 import expressAsyncHandler from 'express-async-handler'
+import { validationResult } from 'express-validator'
 import Posts from '../models/Posts.js'
 import Users from '../models/Users.js'
 
@@ -80,6 +81,11 @@ const posts = {
      * @access  Public
      */
     addPost: expressAsyncHandler(async (req, res) => {
+        const errors = validationResult(req)
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ message: errors.array(), success: false })
+        }
+
         const { userId, title, body } = req.body
         const user = await Users.findById(userId)
 
@@ -88,7 +94,11 @@ const posts = {
 
             if (addedPost) res.status(201).json({ message: 'Post added', success: true })
             else res.status(400).json({ message: 'Invalid post data', success: false })
-        } else res.status(400).json({ message: 'User not found', success: false })
+        } else
+            res.status(400).json({
+                message: [{ msg: 'User not found', param: 'userId' }],
+                success: false,
+            })
     }),
 
     /**
@@ -97,6 +107,11 @@ const posts = {
      * @access  Public
      */
     editPost: expressAsyncHandler(async (req, res) => {
+        const errors = validationResult(req)
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ message: errors.array(), success: false })
+        }
+
         const post = await Posts.findById(req.params.id)
 
         if (post) {
@@ -112,7 +127,11 @@ const posts = {
 
                 if (updatePost) res.status(200).json({ message: 'Post updated', success: true })
                 else res.status(400).json({ message: 'Invalid post data', success: false })
-            } else res.status(400).json({ message: 'User not found', success: false })
+            } else
+                res.status(400).json({
+                    message: [{ msg: 'User not found', param: 'userId' }],
+                    success: false,
+                })
         } else res.status(400).json({ message: 'Post not found', success: false })
     }),
 

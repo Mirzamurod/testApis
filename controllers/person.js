@@ -1,6 +1,7 @@
 import bcryptjs from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import expressAsyncHandler from 'express-async-handler'
+import { validationResult } from 'express-validator'
 import Person from '../models/Person.js'
 
 const salt = await bcryptjs.genSalt(10)
@@ -24,6 +25,11 @@ const person = {
      * @access  Public
      */
     registerPerson: expressAsyncHandler(async (req, res) => {
+        const errors = validationResult(req)
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ message: errors.array(), success: false })
+        }
+
         const { username, email, password } = req.body
         const personExist = await Person.findOne({ email })
 
@@ -33,7 +39,11 @@ const person = {
 
             if (person) res.status(201).json({ message: 'User added', success: true })
             else res.status(400).json({ message: 'User invalid data', success: false })
-        } else res.status(400).json({ message: { email: 'User already exists' }, success: false })
+        } else
+            res.status(400).json({
+                message: [{ msg: 'User already exists', param: 'email' }],
+                success: false,
+            })
     }),
 
     /**
@@ -42,14 +52,23 @@ const person = {
      * @access  Public
      */
     loginPerson: expressAsyncHandler(async (req, res) => {
+        const errors = validationResult(req)
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ message: errors.array(), success: false })
+        }
+
         const { email, password } = req.body
         const person = await Person.findOne({ email })
 
         if (person) {
             if (await bcryptjs.compare(password, person.password))
                 res.status(200).json({ data: { token: generateToken(person._id) }, success: true })
-            else res.status(400).json({ message: 'Email or password is incorrect', success: true })
-        } else res.status(400).json({ message: { email: 'User not found' }, success: true })
+            else res.status(400).json({ message: 'Email or password is incorrect', success: false })
+        } else
+            res.status(400).json({
+                message: [{ msg: 'User not found', param: 'email' }],
+                success: false,
+            })
     }),
 
     /**
@@ -58,6 +77,11 @@ const person = {
      * @access  Private
      */
     editPerson: expressAsyncHandler(async (req, res) => {
+        const errors = validationResult(req)
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ message: errors.array(), success: false })
+        }
+
         const { email, username, password, newPassword } = req.body
         const person = await Person.findOne({ email })
 
@@ -78,7 +102,11 @@ const person = {
 
                 res.status(200).json({ message: 'User updated', success: true })
             } else res.status(400).json({ message: 'Email or password is incorrect' })
-        } else res.status(400).json({ message: 'User not found', success: false })
+        } else
+            res.status(400).json({
+                message: [{ msg: 'User not found', param: 'email' }],
+                success: false,
+            })
     }),
 
     /**

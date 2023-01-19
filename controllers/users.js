@@ -1,4 +1,5 @@
 import expressAsyncHandler from 'express-async-handler'
+import { validationResult } from 'express-validator'
 import Users from '../models/Users.js'
 
 const users = {
@@ -95,6 +96,11 @@ const users = {
      * @access  Public
      */
     addUser: expressAsyncHandler(async (req, res) => {
+        const errors = validationResult(req)
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ message: errors.array(), success: false })
+        }
+
         const { name, username, email, address, phone, website, company } = req.body
 
         const addedUser = {
@@ -129,6 +135,11 @@ const users = {
      * @access  Public
      */
     editUser: expressAsyncHandler(async (req, res) => {
+        const errors = validationResult(req)
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ message: errors.array(), success: false })
+        }
+
         const user = await Users.findById(req.params.id)
 
         if (user) {

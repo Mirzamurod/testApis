@@ -1,16 +1,13 @@
 import express from 'express'
 const router = express.Router()
 import albums from '../controllers/albums.js'
-import checkFields from '../middleware/checkFields.js'
+import { albumField } from '../middleware/checkFields.js'
 
-router
-    .route('/')
-    .get(albums.getAlbums)
-    .post(checkFields(['userId', 'title']), albums.addAlbum)
+router.route('/').get(albums.getAlbums).post(albumField, albums.addAlbum)
 router
     .route('/:id')
     .get(albums.getAlbum)
-    .put(checkFields(['userId', 'title']), albums.editAlbum)
+    .put(albumField, albums.editAlbum)
     .delete(albums.deleteAlbum)
 
 export default router

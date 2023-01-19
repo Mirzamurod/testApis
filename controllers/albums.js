@@ -77,6 +77,11 @@ const albums = {
      * @access  Public
      */
     addAlbum: expressAsyncHandler(async (req, res) => {
+        const errors = validationResult(req)
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ message: errors.array(), success: false })
+        }
+
         const { userId, title } = req.body
         const user = await Users.findById(userId)
 
@@ -84,7 +89,11 @@ const albums = {
             const addedAlbum = await Albums.create({ userId, title })
             if (addedAlbum) res.status(201).json({ message: 'Album added', success: true })
             else res.status(400).json({ message: 'Invalid album data', success: false })
-        } else res.status(400).json({ message: 'User not found', success: false })
+        } else
+            res.status(400).json({
+                message: [{ msg: 'User not found', param: 'userId' }],
+                success: false,
+            })
     }),
 
     /**
@@ -93,6 +102,11 @@ const albums = {
      * @access  Public
      */
     editAlbum: expressAsyncHandler(async (req, res) => {
+        const errors = validationResult(req)
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ message: errors.array(), success: false })
+        }
+
         const album = await Albums.findById(req.params.id)
 
         if (album) {
@@ -108,7 +122,11 @@ const albums = {
 
                 if (updateAlbum) res.status(200).json({ message: 'Album updated', success: true })
                 else res.status(400).json({ message: 'Invalid album data', success: false })
-            } else res.status(400).json({ message: 'User not found', success: false })
+            } else
+                res.status(400).json({
+                    message: [{ msg: 'User not found', param: 'userId' }],
+                    success: false,
+                })
         } else res.status(400).json({ message: 'Albums not found', success: false })
     }),
 
