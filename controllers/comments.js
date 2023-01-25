@@ -1,4 +1,5 @@
 import expressAsyncHandler from 'express-async-handler'
+import { errorFormatter } from '../middleware/checkFields.js'
 import Posts from '../models/Posts.js'
 import Comments from './../models/Comments.js'
 
@@ -84,7 +85,7 @@ const comments = {
      * @access  Public
      */
     addComment: expressAsyncHandler(async (req, res) => {
-        const errors = validationResult(req)
+        const errors = validationResult(req).formatWith(errorFormatter)
         if (!errors.isEmpty()) {
             return res.status(400).json({ message: errors.array(), success: false })
         }
@@ -110,7 +111,7 @@ const comments = {
      * @access  Public
      */
     editComment: expressAsyncHandler(async (req, res) => {
-        const errors = validationResult(req)
+        const errors = validationResult(req).formatWith(errorFormatter)
         if (!errors.isEmpty()) {
             return res.status(400).json({ message: errors.array(), success: false })
         }

@@ -1,5 +1,6 @@
 import expressAsyncHandler from 'express-async-handler'
 import { validationResult } from 'express-validator'
+import { errorFormatter } from '../middleware/checkFields.js'
 import Users from '../models/Users.js'
 
 const users = {
@@ -96,7 +97,7 @@ const users = {
      * @access  Public
      */
     addUser: expressAsyncHandler(async (req, res) => {
-        const errors = validationResult(req)
+        const errors = validationResult(req).formatWith(errorFormatter)
         if (!errors.isEmpty()) {
             return res.status(400).json({ message: errors.array(), success: false })
         }
@@ -135,7 +136,7 @@ const users = {
      * @access  Public
      */
     editUser: expressAsyncHandler(async (req, res) => {
-        const errors = validationResult(req)
+        const errors = validationResult(req).formatWith(errorFormatter)
         if (!errors.isEmpty()) {
             return res.status(400).json({ message: errors.array(), success: false })
         }

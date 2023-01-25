@@ -5,6 +5,7 @@ import fs from 'fs/promises'
 import { validationResult } from 'express-validator'
 import Photos from '../models/Photos.js'
 import Albums from './../models/Albums.js'
+import { errorFormatter } from '../middleware/checkFields.js'
 
 const photos = {
     /**
@@ -81,7 +82,7 @@ const photos = {
      * @access  Public
      */
     addPhoto: expressAsyncHandler(async (req, res) => {
-        const errors = validationResult(req)
+        const errors = validationResult(req).formatWith(errorFormatter)
         if (!errors.isEmpty()) {
             return res.status(400).json({ message: errors.array(), success: false })
         }
@@ -135,7 +136,7 @@ const photos = {
      * @access  Public
      */
     editPhoto: expressAsyncHandler(async (req, res) => {
-        const errors = validationResult(req)
+        const errors = validationResult(req).formatWith(errorFormatter)
         if (!errors.isEmpty()) {
             return res.status(400).json({ message: errors.array(), success: false })
         }

@@ -1,4 +1,5 @@
 import expressAsyncHandler from 'express-async-handler'
+import { errorFormatter } from '../middleware/checkFields.js'
 import Users from '../models/Users.js'
 import Albums from './../models/Albums.js'
 
@@ -77,7 +78,7 @@ const albums = {
      * @access  Public
      */
     addAlbum: expressAsyncHandler(async (req, res) => {
-        const errors = validationResult(req)
+        const errors = validationResult(req).formatWith(errorFormatter)
         if (!errors.isEmpty()) {
             return res.status(400).json({ message: errors.array(), success: false })
         }
@@ -102,7 +103,7 @@ const albums = {
      * @access  Public
      */
     editAlbum: expressAsyncHandler(async (req, res) => {
-        const errors = validationResult(req)
+        const errors = validationResult(req).formatWith(errorFormatter)
         if (!errors.isEmpty()) {
             return res.status(400).json({ message: errors.array(), success: false })
         }

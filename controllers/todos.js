@@ -1,5 +1,6 @@
 import expressAsyncHandler from 'express-async-handler'
 import { validationResult } from 'express-validator'
+import { errorFormatter } from '../middleware/checkFields.js'
 import Todos from '../models/Todos.js'
 import Users from '../models/Users.js'
 
@@ -77,7 +78,7 @@ const todos = {
      * @access  Public
      */
     addTodo: expressAsyncHandler(async (req, res) => {
-        const errors = validationResult(req)
+        const errors = validationResult(req).formatWith(errorFormatter)
         if (!errors.isEmpty()) {
             return res.status(400).json({ message: errors.array(), success: false })
         }
@@ -102,7 +103,7 @@ const todos = {
      * @access  Public
      */
     editTodo: expressAsyncHandler(async (req, res) => {
-        const errors = validationResult(req)
+        const errors = validationResult(req).formatWith(errorFormatter)
         if (!errors.isEmpty()) {
             return res.status(400).json({ message: errors.array(), success: false })
         }

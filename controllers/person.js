@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken'
 import expressAsyncHandler from 'express-async-handler'
 import { validationResult } from 'express-validator'
 import Person from '../models/Person.js'
+import { errorFormatter } from '../middleware/checkFields.js'
 
 const salt = await bcryptjs.genSalt(10)
 
@@ -25,7 +26,7 @@ const person = {
      * @access  Public
      */
     registerPerson: expressAsyncHandler(async (req, res) => {
-        const errors = validationResult(req)
+        const errors = validationResult(req).formatWith(errorFormatter)
         if (!errors.isEmpty()) {
             return res.status(400).json({ message: errors.array(), success: false })
         }
@@ -52,7 +53,7 @@ const person = {
      * @access  Public
      */
     loginPerson: expressAsyncHandler(async (req, res) => {
-        const errors = validationResult(req)
+        const errors = validationResult(req).formatWith(errorFormatter)
         if (!errors.isEmpty()) {
             return res.status(400).json({ message: errors.array(), success: false })
         }
@@ -77,7 +78,7 @@ const person = {
      * @access  Private
      */
     editPerson: expressAsyncHandler(async (req, res) => {
-        const errors = validationResult(req)
+        const errors = validationResult(req).formatWith(errorFormatter)
         if (!errors.isEmpty()) {
             return res.status(400).json({ message: errors.array(), success: false })
         }

@@ -1,5 +1,9 @@
 import { check } from 'express-validator'
 
+const errorFormatter = ({ msg, param }) => {
+    return { msg, param }
+}
+
 const albumField = [check('userId').notEmpty(), check('title').notEmpty()]
 
 const commentField = [
@@ -105,4 +109,5 @@ export {
     postField,
     todoField,
     userField,
+    errorFormatter,
 }
