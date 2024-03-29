@@ -73,7 +73,7 @@ const posts = {
         const post = await Posts.findById(req.params.id, arrs)
 
         if (post) res.status(200).json(post)
-        else res.status(400).json({ message: 'Post not found' })
+        else res.status(400).json({ message: 'Post not found', success: false })
     }),
 
     /**

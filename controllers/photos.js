@@ -73,7 +73,7 @@ const photos = {
         const photo = await Photos.findById(req.params.id, arrs)
 
         if (photo) res.status(200).json(photo)
-        else res.status(400).json({ message: 'Photo not found' })
+        else res.status(400).json({ message: 'Photo not found', success: false })
     }),
 
     /**

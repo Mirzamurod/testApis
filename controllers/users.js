@@ -88,7 +88,7 @@ const users = {
 
         const user = await Users.findById(req.params.id, arrs)
         if (user) res.status(200).json(user)
-        else res.status(400).json({ message: 'User not found' })
+        else res.status(400).json({ message: 'User not found', success: false })
     }),
 
     /**

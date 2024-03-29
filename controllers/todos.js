@@ -69,7 +69,7 @@ const todos = {
 
         const todo = await Todos.findById(req.params.id, arrs)
         if (todo) res.status(200).json(todo)
-        else res.status(400).json({ message: 'Todo not found' })
+        else res.status(400).json({ message: 'Todo not found', success: false })
     }),
 
     /**

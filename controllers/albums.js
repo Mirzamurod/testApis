@@ -69,7 +69,7 @@ const albums = {
         const album = await Albums.findById(req.params.id, arrs)
 
         if (album) res.status(200).json(album)
-        else res.status(400).json({ message: 'Album not found' })
+        else res.status(400).json({ message: 'Album not found', success: false })
     }),
 
     /**

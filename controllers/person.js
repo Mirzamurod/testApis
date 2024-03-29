@@ -102,7 +102,7 @@ const person = {
                 )
 
                 res.status(200).json({ message: 'User updated', success: true })
-            } else res.status(400).json({ message: 'Email or password is incorrect' })
+            } else res.status(400).json({ message: 'Email or password is incorrect', success: false })
         } else
             res.status(400).json({
                 message: [{ msg: 'User not found', param: 'email' }],

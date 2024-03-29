@@ -76,7 +76,7 @@ const comments = {
         const comment = await Comments.findById(req.params.id, arrs)
 
         if (comment) res.status(200).json(comment)
-        else res.status(400).json({ message: 'Comment not found' })
+        else res.status(400).json({ message: 'Comment not found', success: false })
     }),
 
     /**
